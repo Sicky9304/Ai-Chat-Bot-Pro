@@ -1,34 +1,33 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { initializeApp } from 'firebase/app';
-import { 
-  getFirestore, 
-  collection, 
-  addDoc, 
-  getDocs, 
-  orderBy, 
-  query, 
+import {
+  getFirestore,
+  collection,
+  addDoc,
+  getDocs,
+  orderBy,
+  query,
   serverTimestamp,
   doc,
   updateDoc,
   getDoc,
-  deleteDoc 
+  deleteDoc
 } from 'firebase/firestore';
 import { GoogleGenerativeAI } from '@google/generative-ai';
 import './App.css';
 
 // Firebase Configuration - Replace with your actual config
 const firebaseConfig = {
-  apiKey: "AIzaSyDC6Au-QwvsBrIYkATqTl1a1rX-w6t3ozw",
-  authDomain: "ai-chat-boat-2440a.firebaseapp.com",
-  projectId: "ai-chat-boat-2440a",
-  storageBucket: "ai-chat-boat-2440a.firebasestorage.app",
-  messagingSenderId: "76899110532",
-  appId: "1:76899110532:web:d2fafbc4e1f246207cbcd1",
-  measurementId: "G-LM97GJS6PV"
+  apiKey: "YOUR_API_KEY_HERE",
+  authDomain: "your-project.firebaseapp.com",
+  projectId: "your-project-id",
+  storageBucket: "your-project.appspot.com",
+  messagingSenderId: "123456789",
+  appId: "1:123456789:web:abcdefghijklmnop"
 };
 
 // Gemini AI Configuration - Replace with your actual API key
-const GEMINI_API_KEY = "AIzaSyBS4q_gN8VGsWR59yX4cdTxWVbKwQTDXDE";
+const GEMINI_API_KEY = "YOUR_GEMINI_API_KEY_HERE";
 
 // Initialize Firebase
 const app = initializeApp(firebaseConfig);
@@ -50,7 +49,7 @@ function App() {
   const [isDarkMode, setIsDarkMode] = useState(false);
   const [uploadedFiles, setUploadedFiles] = useState([]);
   const [isProcessingFile, setIsProcessingFile] = useState(false);
-  
+
   const messagesEndRef = useRef(null);
   const textareaRef = useRef(null);
   const fileInputRef = useRef(null);
@@ -113,28 +112,28 @@ function App() {
       .replace(/^### (.*$)/gm, '<h3 class="ai-header-3">$1</h3>')
       .replace(/^## (.*$)/gm, '<h2 class="ai-header-2">$1</h2>')
       .replace(/^# (.*$)/gm, '<h1 class="ai-header-1">$1</h1>')
-      
+
       // Convert bullet points
       .replace(/^\* (.*$)/gm, '<li class="ai-bullet">$1</li>')
       .replace(/^- (.*$)/gm, '<li class="ai-bullet">$1</li>')
-      
+
       // Convert numbered lists
       .replace(/^\d+\. (.*$)/gm, '<li class="ai-numbered">$1</li>')
-      
+
       // Convert bold text
       .replace(/\*\*(.*?)\*\*/g, '<strong class="ai-bold">$1</strong>')
       .replace(/__(.*?)__/g, '<strong class="ai-bold">$1</strong>')
-      
+
       // Convert italic text
       .replace(/\*(.*?)\*/g, '<em class="ai-italic">$1</em>')
       .replace(/_(.*?)_/g, '<em class="ai-italic">$1</em>')
-      
+
       // Convert inline code
       .replace(/`([^`]+)`/g, '<code class="ai-inline-code">$1</code>')
-      
+
       // Convert code blocks
       .replace(/```([\s\S]*?)```/g, '<pre class="ai-code-block"><code>$1</code></pre>')
-      
+
       // Convert line breaks
       .replace(/\n/g, '<br/>');
 
@@ -161,7 +160,7 @@ function App() {
         orderBy('createdAt', 'desc')
       );
       const sessionSnapshot = await getDocs(sessionsQuery);
-      
+
       const sessionsList = [];
       sessionSnapshot.forEach((doc) => {
         const sessionData = doc.data();
@@ -228,7 +227,7 @@ function App() {
         messages: [],
         files: []
       });
-      
+
       const newSession = {
         id: newSessionDoc.id,
         sessionId,
@@ -240,7 +239,7 @@ function App() {
 
       // Add to sessions list at the beginning
       setSessions(prevSessions => [newSession, ...prevSessions]);
-      
+
       setCurrentSessionId(newSessionDoc.id);
       setMessages([]);
       setUploadedFiles([]);
@@ -255,7 +254,7 @@ function App() {
   // Save messages and files to Firestore
   const saveToFirestore = async (updatedMessages, updatedFiles = uploadedFiles) => {
     if (!currentSessionId) return;
-    
+
     try {
       const sessionRef = doc(db, 'sessions', currentSessionId);
       await updateDoc(sessionRef, {
@@ -265,9 +264,9 @@ function App() {
       });
 
       // Update session title in local state
-      setSessions(prevSessions => 
-        prevSessions.map(session => 
-          session.id === currentSessionId 
+      setSessions(prevSessions =>
+        prevSessions.map(session =>
+          session.id === currentSessionId
             ? { ...session, title: generateSessionTitle(updatedMessages), messages: updatedMessages, files: updatedFiles }
             : session
         )
@@ -288,7 +287,7 @@ function App() {
 
     try {
       const processedFiles = [];
-      
+
       for (const file of files) {
         // Check file size (limit to 10MB)
         if (file.size > 10 * 1024 * 1024) {
@@ -306,7 +305,7 @@ function App() {
 
         const fileExtension = file.name.split('.').pop().toLowerCase();
         const codeExtensions = ['js', 'jsx', 'ts', 'tsx', 'py', 'java', 'cpp', 'c', 'php', 'rb', 'go', 'rs', 'swift', 'kt'];
-        
+
         if (!allowedTypes.includes(file.type) && !codeExtensions.includes(fileExtension)) {
           setError(`File type ${file.type || fileExtension} is not supported.`);
           continue;
@@ -382,7 +381,7 @@ function App() {
   // Send message to Gemini AI
   const sendMessageToAI = async (userMessage) => {
     try {
-      const model = genAI.getGenerativeModel({ 
+      const model = genAI.getGenerativeModel({
         model: "gemini-1.5-flash",
         systemInstruction: `You are a comprehensive AI assistant. Provide detailed, well-formatted responses with:
         - Clear headings using ## for main sections
@@ -437,7 +436,7 @@ function App() {
   // Handle sending a message
   const handleSendMessage = async (e) => {
     e.preventDefault();
-    
+
     if (!inputMessage.trim() || isLoading) return;
 
     const userMessage = inputMessage.trim();
@@ -460,7 +459,7 @@ function App() {
     try {
       // Get AI response
       const aiResponse = await sendMessageToAI(userMessage);
-      
+
       // Add AI message with formatted content
       const aiMsgObj = {
         id: (Date.now() + 1).toString(),
@@ -472,14 +471,14 @@ function App() {
 
       const finalMessages = [...updatedMessages, aiMsgObj];
       setMessages(finalMessages);
-      
+
       // Save to Firestore
       await saveToFirestore(finalMessages, uploadedFiles);
-      
+
     } catch (error) {
       console.error('Error sending message:', error);
       setError(error.message || 'Failed to send message');
-      
+
       // Remove the user message if AI response failed
       setMessages(messages);
     } finally {
@@ -509,7 +508,7 @@ function App() {
   // Delete a session permanently from Firestore
   const handleDeleteSession = async (sessionId, e) => {
     e.stopPropagation();
-    
+
     if (!window.confirm('Are you sure you want to permanently delete this session? This action cannot be undone.')) {
       return;
     }
@@ -523,14 +522,14 @@ function App() {
 
       if (sessionId === currentSessionId) {
         const remainingSessions = sessions.filter(session => session.id !== sessionId);
-        
+
         if (remainingSessions.length > 0) {
           await loadSession(remainingSessions[0].id);
         } else {
           await createNewSession();
         }
       }
-      
+
     } catch (error) {
       console.error('Error deleting session:', error);
       setError(`Failed to delete session: ${error.message}`);
@@ -592,14 +591,14 @@ function App() {
           <div className="session-header">
             <h3>Chat Sessions</h3>
             <div className="header-controls">
-              <button 
+              <button
                 className="theme-toggle"
                 onClick={toggleDarkMode}
                 title={isDarkMode ? 'Switch to light mode' : 'Switch to dark mode'}
               >
                 {isDarkMode ? '☀️' : '🌙'}
               </button>
-              <button 
+              <button
                 className="close-sidebar"
                 onClick={() => setShowSessionList(false)}
               >
@@ -615,7 +614,7 @@ function App() {
               </div>
             ) : (
               sessions.map((session) => (
-                <div 
+                <div
                   key={session.id}
                   className={`session-item ${session.id === currentSessionId ? 'active' : ''} ${isDeletingSession ? 'deleting' : ''}`}
                   onClick={() => {
@@ -636,7 +635,7 @@ function App() {
                       </div>
                     )}
                   </div>
-                  <button 
+                  <button
                     className="delete-session"
                     onClick={(e) => handleDeleteSession(session.id, e)}
                     disabled={isDeletingSession}
@@ -656,7 +655,7 @@ function App() {
           <header className="chat-header">
             <div className="header-content">
               <div className="header-left">
-                <button 
+                <button
                   className="btn btn-ghost sessions-toggle"
                   onClick={() => setShowSessionList(!showSessionList)}
                 >
@@ -669,14 +668,14 @@ function App() {
                 </h1>
               </div>
               <div className="header-actions">
-                <button 
+                <button
                   className="btn btn-ghost theme-toggle-header"
                   onClick={toggleDarkMode}
                   title={isDarkMode ? 'Switch to light mode' : 'Switch to dark mode'}
                 >
                   <span className="btn-icon">{isDarkMode ? '☀️' : '🌙'}</span>
                 </button>
-                <button 
+                <button
                   className="btn btn-secondary"
                   onClick={createNewSession}
                   disabled={isLoading || isDeletingSession}
@@ -684,7 +683,7 @@ function App() {
                   <span className="btn-icon">➕</span>
                   New Session
                 </button>
-                <button 
+                <button
                   className="btn btn-outline"
                   onClick={handleClearChat}
                   disabled={isLoading || (messages.length === 0 && uploadedFiles.length === 0) || isDeletingSession}
@@ -709,7 +708,7 @@ function App() {
                       <span className="file-name">{file.name}</span>
                       <span className="file-size">{formatFileSize(file.size)}</span>
                     </div>
-                    <button 
+                    <button
                       className="remove-file"
                       onClick={() => removeFile(file.id)}
                       title="Remove file"
@@ -751,13 +750,13 @@ function App() {
                     </div>
                     <div className="example-prompts">
                       <span className="example-title">Try asking:</span>
-                      <button 
+                      <button
                         className="example-prompt"
                         onClick={() => setInputMessage("How do I implement a REST API in Node.js?")}
                       >
                         "How do I implement a REST API in Node.js?"
                       </button>
-                      <button 
+                      <button
                         className="example-prompt"
                         onClick={() => setInputMessage("Analyze this code for potential improvements")}
                       >
@@ -775,7 +774,7 @@ function App() {
                     <div className="message-content">
                       <div className="message-text">
                         {message.sender === 'ai' && message.formattedText ? (
-                          <div 
+                          <div
                             className="formatted-ai-response"
                             dangerouslySetInnerHTML={{ __html: message.formattedText }}
                           />
@@ -798,7 +797,7 @@ function App() {
                   </div>
                 ))
               )}
-              
+
               {/* Loading indicator */}
               {isLoading && (
                 <div className="message ai">
@@ -815,7 +814,7 @@ function App() {
                   </div>
                 </div>
               )}
-              
+
               <div ref={messagesEndRef} />
             </div>
           </main>
@@ -825,7 +824,7 @@ function App() {
             <div className="error-banner">
               <span className="error-icon">⚠️</span>
               <span className="error-text">{error}</span>
-              <button 
+              <button
                 className="error-close"
                 onClick={() => setError('')}
               >
@@ -887,7 +886,7 @@ function App() {
 
         {/* Overlay for mobile session sidebar */}
         {showSessionList && (
-          <div 
+          <div
             className="sidebar-overlay"
             onClick={() => setShowSessionList(false)}
           />
