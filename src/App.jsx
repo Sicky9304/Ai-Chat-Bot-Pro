@@ -18,16 +18,17 @@ import './App.css';
 
 // Firebase Configuration - Replace with your actual config
 const firebaseConfig = {
-  apiKey: "YOUR_API_KEY_HERE",
-  authDomain: "your-project.firebaseapp.com",
-  projectId: "your-project-id",
-  storageBucket: "your-project.appspot.com",
-  messagingSenderId: "123456789",
-  appId: "1:123456789:web:abcdefghijklmnop"
+  apiKey: "AIzaSyDC6Au-QwvsBrIYkATqTl1a1rX-w6t3ozw",
+  authDomain: "ai-chat-boat-2440a.firebaseapp.com",
+  projectId: "ai-chat-boat-2440a",
+  storageBucket: "ai-chat-boat-2440a.firebasestorage.app",
+  messagingSenderId: "76899110532",
+  appId: "1:76899110532:web:d2fafbc4e1f246207cbcd1",
+  measurementId: "G-LM97GJS6PV"
 };
 
 // Gemini AI Configuration - Replace with your actual API key
-const GEMINI_API_KEY = "YOUR_GEMINI_API_KEY_HERE";
+const GEMINI_API_KEY = "AIzaSyBS4q_gN8VGsWR59yX4cdTxWVbKwQTDXDE";
 
 // Initialize Firebase
 const app = initializeApp(firebaseConfig);
