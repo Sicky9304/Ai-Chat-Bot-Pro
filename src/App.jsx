@@ -749,21 +749,7 @@ function App() {
                         <span>Persistent chat sessions</span>
                       </div>
                     </div>
-                    <div className="example-prompts">
-                      <span className="example-title">Try asking:</span>
-                      <button
-                        className="example-prompt"
-                        onClick={() => setInputMessage("How do I implement a REST API in Node.js?")}
-                      >
-                        "How do I implement a REST API in Node.js?"
-                      </button>
-                      <button
-                        className="example-prompt"
-                        onClick={() => setInputMessage("Analyze this code for potential improvements")}
-                      >
-                        "Analyze this code for potential improvements"
-                      </button>
-                    </div>
+
                   </div>
                 </div>
               ) : (

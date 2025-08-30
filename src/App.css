@@ -746,8 +746,8 @@ select.form-control {
 }
 
 html, body {
-  height: 100%;
-  width: 100%;
+  height: auto;
+  width: auto;
   font-family: var(--font-family-base);
   transition: background-color var(--duration-normal) var(--ease-standard), color var(--duration-normal) var(--ease-standard);
   overflow: hidden;
@@ -1018,6 +1018,7 @@ html, body {
   color: var(--color-btn-primary-text);
   padding: var(--space-24) var(--space-32);
   border-bottom: 1px solid var(--color-border);
+  margin-bottom: 30px;
   flex-shrink: 0;
 }
 
@@ -1025,7 +1026,7 @@ html, body {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  gap: var(--space-24);
+  gap: var(--space-20);
 }
 
 .header-left {
